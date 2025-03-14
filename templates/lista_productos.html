@@ -1,0 +1,219 @@
+{% extends "base_admin.html" %}
+{% block body %}
+  
+  <div class="lista-productos-content">
+    <div class="lista-productos-header">
+      <h1>Lista de productos</h1>
+
+      <div class="rainbow-banner-lista"></div>
+
+      <div class="lista-productos-filtros">
+
+        <div class="filtro-tipo">
+          <p>Tipo de productos</p>
+          <select name="select_tipoproductos" id="select_tipoproductos" onchange="seleccionarTipoProducto()">
+            <option value="Todos">Todos</option>
+            <option value="Collares">Collares</option>
+            <option value="Pulseras">Pulseras</option>
+            <option value="Aretes">Aretes</option>
+            <option value="Stickers">Stickers</option>
+          </select>
+        </div>
+        <div class="flitro-nombre">
+          <input type="text" name="buscar_nombre" id="buscar_nombre" placeholder="Introduce el nombre del producto..." onkeyup="buscarPorNombre()">
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="lista-productos-content">
+
+    <div class="lista-productos">
+      <table>
+        <thead>
+          <th>
+            Nombre
+          </th>
+          <th>
+            Costo
+          </th>
+          <th>
+            Descripción Resumida
+          </th>
+          <th>
+            Tipo
+          </th>
+          <th>
+            Producto del mes
+          </th>
+          <th>
+            Desactivar producto
+          </th>
+          <th>
+            Detalles
+          </th>
+        </thead>
+        <tbody id="tablaProductos">
+          {% for producto in productos %}
+          <tr id="producto{{loop.index}}">
+            <td>
+              {{producto['nombre']}}
+            </td>
+            <td>
+              ${{"%.2f"|format(producto['costo'])}}
+            </td>
+            <td>
+              {{producto['descripcionResumida']}}
+            </td>
+            <td>
+              {% if producto['idCategoria'] == 1%}
+              <p>Collares</p>
+              {% endif %}
+              {% if producto['idCategoria'] == 2%}
+              <p>Pulseras</p>
+              {% endif %}
+              {% if producto['idCategoria'] == 3%}
+              <p>Aretes</p>
+              {% endif %}
+              {% if producto['idCategoria'] == 4%}
+              <p>Stickers</p>
+              {% endif %}
+            </td>
+            <td>
+              <input type="radio" name="btnradio_productomes" onclick="openProductOfMonthModal('{{ loop.index }}')" {% if producto['idProducto']|string == idProductoDelMes|string %} checked {% endif %}>
+            </td>
+            <td>
+              <input type="checkbox" onclick="activarProducto('{{loop.index}}')" {% if producto['activo'] %} checked{% endif %}>
+            </td>
+            <td>
+              {% set idProducto = producto['idProducto'] %}
+              <button onclick='cargarIdProducto("{{loop.index}}");cargarModal("editarproducto")'>Detalles</button>
+            </td>
+            <td hidden>
+              esta cosa existe para no modificar el orden del arreglo de celdas para las funciones, antes estaba el boton de borrar. NO BORRAR o va a dejar de funcionar correctamente
+            </td>
+            <td hidden>
+              <img src="{{producto['imagen']}}" alt="">
+            </td>
+            <td hidden>
+              {{producto['descripcionGeneral']}}
+            </td>
+            <td hidden>
+              {{producto['idProducto']}}
+            </td>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="modal-bg" id="modal-bg-editarproducto">
+      <div class="modal-content-detalles">
+          <div class="add-product-form">
+              <div class="form-wrapper">
+                  <div class="form-title">
+                    <div class="mitad derecha">Editar Producto</div>
+                    <div class="mitad izquierda">
+                      <div class="close-button" onclick="desactivarModalconID('editarproducto')">
+                        <i class="fas fa-times"></i>
+                      </div>
+                    </div>
+                  </div>
+                  <form action="" id="form-detalles">  
+                      <div class="form-row">
+                          <div class="form-field">
+                              <label for="product-image">Imagen del Producto:</label>
+                              <div class="file-container">
+                                  <input type="file" name="product-image" id="product-image" accept="image/*">
+                                  <i class="fas fa-folder-open"></i>
+                              </div>
+                              <a href="" target="_blank" id="link_imagen" class="link-imagen">Imagen actual</a>
+                          </div>
+                          <div class="form-field">
+                              <label for="product-type">Tipo de Producto:</label>
+                              <select name="product-type" id="product-type" required>
+                                  <option value="aretes">Aretes</option>
+                                  <option value="stickers">Stickers</option>
+                                  <option value="pulseras">Pulseras</option>
+                                  <option value="collares">Collares</option>
+                              </select>
+                          </div>
+                      </div>
+  
+                      <div class="form-row">
+                          <div class="form-field">
+                              <label for="product-name">Nombre del Producto:</label>
+                              <input type="text" name="product-name" id="product-name" required>
+                          </div>
+                          <div class="form-field">
+                              <label for="product-cost">Costo del Producto:</label>
+                              <input inputmode="numeric" name="product-cost" id="product-cost" oninput="maintainFirstCharacter(event); validateInput(event)" required>
+                          </div>
+                      </div>
+  
+                      <div class="form-row">
+                          <div class="form-field">
+                              <label for="short-description">Descripción Resumida:</label>
+                              <input type="text" name="short-description" id="short-description"></textarea>
+                          </div>
+                          <div class="form-field">
+                              <label for="full-description">Descripción General:</label>
+                              <textarea name="full-description" id="full-description"></textarea>
+                          </div>
+                      </div>
+  
+                      <div class="center">
+                        <button class="modal-boton" onclick="actualizarProducto()">Editar Producto</button>
+                      </div>
+                      <p hidden id="product-id"></p>
+                  </form>
+              </div>
+          </div>
+      </div>
+    </div>
+
+    <div class="modal-bg" id="modal-bg-productomes">
+      <div class="modal-content-detalles">
+        <div class="add-product-form">
+          <div class="form-wrapper">
+            <div class="form-title">
+              <div class="mitad derecha">Producto del Mes</div>
+              <div class="mitad izquierda">
+                <div class="close-button" onclick="desactivarModalconIDAndReload('productomes')">
+                  <i class="fas fa-times"></i>
+                </div>
+              </div>
+            </div>
+            <form action="" id="form-productomes">
+              <div class="center">
+                <p>¿Seguro quieres asignar "Producto genérico" como producto del mes de Finkies?</p>
+              </div>
+              <div class="center">
+                <button class="modal-boton" onclick="acceptProductOfMonth()">Sí, asignar</button>
+                <button class="modal-boton" onclick="desactivarModalconID('productomes')">No, regresar</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function openProductOfMonthModal(index) {
+        selectedProductIndex = index;
+        document.getElementById('modal-bg-productomes').style.display = 'flex';
+      }
+
+      function acceptProductOfMonth() {
+        seleccionarProductoDelMes(selectedProductIndex);
+        event.preventDefault();
+        desactivarModalconID('productomes');
+      }
+
+      function desactivarModalconIDAndReload(id) {
+        desactivarModalconID(id);
+        location.reload();
+      }
+    </script>
+
+  </div>
+  {%endblock%}

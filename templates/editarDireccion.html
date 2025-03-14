@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block body %}
+<div class="register">
+    <div class="wrapper">
+        <div class="title">
+           Editar dirección
+        </div>
+        <form action="" method="post">
+
+            <div class="row">
+                <div class="field">
+                    <input type="text" name="nombre" id="nombre" value="{{direccion.nombres}}" placeholder="Introduce tu(s) nombre(s)" required>
+                </div>
+                <div class="field">
+                    <input type="text" name="apellido" id="apellido" value="{{direccion.apellidos}}" placeholder="Introduce tus apellidos" required>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="field">
+                    <input type="text" name="correo" id="correo" value="{{direccion.email}}" placeholder="Introduce tu correo electrónico" required>
+                </div>
+                <div class="field">
+                    <input type="text" name="telefono" id="telefono" value="{{direccion.telefono}}" placeholder="Introduce tu telefono" required>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="field">
+                    <input type="text" name="codigoPostal" id="codigoPostal" value="{{direccion.direccion.codigoPostal}}" placeholder="Introduce tu código postal" required>
+                </div>
+                <div class="field">
+                    <input type="text" name="colonia" id="colonia" value="{{direccion.direccion.colonia}}" placeholder="Introduce tu colonia" required>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="field">
+                    <input type="text" name="calle" id="calle" value="{{direccion.direccion.calle}}" placeholder="Introduce tu calle" required>
+                </div>
+                <div class="field">
+                    <input type="text" name="numero" id="numero" value="{{direccion.direccion.numero}}"placeholder="Introduce tu numero exterior" required>
+                </div>
+            </div>
+            <div class="row">
+                <div class="field">
+                    <input type="text" name="estado" id="estado" value="{{direccion.direccion.estado}}" placeholder="Introduce tu estado" required>
+                </div>
+                <div class="field">
+                    <input type="text" name="ciudad" id="ciudad" value="{{direccion.direccion.ciudad}}" placeholder="Introduce tu ciudad" required>
+                </div>
+            </div>
+            <div class="centrar">
+                <input type="submit" id="confirmar" value="Guardar">
+            </div>
+
+        </form>
+    </div>
+</div>
+{% endblock %}

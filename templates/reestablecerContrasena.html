@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block body %}
+<div class="register">
+    <div class="wrapper">
+        <div class="title">
+           Reestablecer Contraseña
+        </div>
+        <form action="" method="post">
+            <div class="row">
+                <div class="field">
+                    <input type="password" name="contrasena" id="contrasena" placeholder="Introduce tu contraseña" required>
+                </div>
+                <div class="field">
+                    <input type="password" name="contrasena2" id="contrasena2" placeholder="Confirma tu contraseña" required>
+                </div>
+            </div>
+
+            <div class="row">
+
+                <div class="field">
+                    <span id="coinciden"></span>
+                </div>
+            </div>
+
+            <div class="centrar">
+                <input type="submit" id="confirmar" value="Actualizar contraseña">
+            </div>
+
+        </form>
+        <script>
+            var contrasena = document.getElementById("contrasena")
+            , contrasena2 = document.getElementById("contrasena2");
+        
+            function coinciden(){
+                if(contrasena.value != contrasena2.value) {
+                    contrasena2.setCustomValidity("Las contraseñas no coinciden");
+                    document.getElementById("coinciden").innerHTML = "Las contraseñas no coinciden";
+                    document.getElementById("coinciden").style.color = "red";
+                } else {
+                    contrasena2.setCustomValidity('');
+                    document.getElementById("coinciden").innerHTML = "";
+                }
+            }
+            contrasena.onchange = validarContrasena;
+            contrasena2.onkeyup = coinciden;
+        
+            function validarContrasena() {
+                var regex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/
+                if(regex.test(contrasena.value)) {
+                    contrasena.setCustomValidity('');
+                    document.getElementById("coinciden").innerHTML = "";
+                } else {
+                    contrasena.setCustomValidity("La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula y un número");
+                    document.getElementById("coinciden").innerHTML = "La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula y un número";
+                    document.getElementById("coinciden").style.color = "red";
+                }
+        
+            }
+        </script>
+    </div>
+</div>
+{% endblock %}

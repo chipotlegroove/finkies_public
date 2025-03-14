@@ -1,0 +1,267 @@
+{% extends "base.html" %}
+{% block body %}
+<div class="container">
+    <div class="pago">
+        <h1>Pago</h1>
+        
+        <div class="address-container">
+            <h2 class="delivery-header">Dirección de Entrega</h2>
+            <div class="address-details">
+                <div class="address-details-content">
+                    {% if 'logged_in' not in session %}
+                        {% if 'direccionenvio' not in session %}
+                            <div class="address-details-left">
+                                <span class="bold-text">No hay direcciones guardadas. Crea una cuenta para guardar tus direcciones!</span>
+                                <div class="address-change">
+                                    <a href="/agregar-direccion-invitado">Agregar direccion</a>
+                                </div>
+                            </div>
+                        {% else %}
+                            <div class="address-details-left" id="direccion_seleccionada">
+                                <span hidden id="id_seleccionado">{{session['direccionenvio']['idDireccionUsuario']}}</span>
+                                <span class="bold-text">Nombre: {{session['direccionenvio']['nombres']}} {{session['direccionenvio']['apellidos']}}</span>
+                                <span>Teléfono: {{session['direccionenvio']['telefono']}}</span>
+                                <span>Correo Electrónico: {{session['direccionenvio']['email']}}</span>
+                                <p>{{session['direccionenvio']['direccion']['calle']}} {{session['direccionenvio']['direccion']['numero']}}, {{session['direccionenvio']['direccion']['colonia']}}, {{session['direccionenvio']['direccion']['codigoPostal']}}, {{session['direccionenvio']['direccion']['ciudad']}}, {{session['direccionenvio']['direccion']['estado']}}, México</p>
+                                <p>{{session['direccionenvio']['direccion']['ciudad']}}, {{session['direccionenvio']['direccion']['estado']}}, México, {{session['direccionenvio']['direccion']['codigoPostal']}}</p>
+                            </div>
+                            <div class="address-details-right">
+                                <div class="address-change">
+                                    <a href="/editar-direccion-invitado">Modificar direccion</a>
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% else %}
+                    {% if direcciones|length != 0 %}
+                        <div class="address-details-left" id="direccion_seleccionada">
+                            <span hidden id="id_seleccionado">{{direcciones[direcciones|length-1]['idDireccionUsuario']}}</span>
+                            <span class="bold-text">Nombre: {{direcciones[direcciones|length-1]['nombres']}} {{direcciones[direcciones|length-1]['apellidos']}}</span>
+                            <span>Teléfono: {{direcciones[direcciones|length-1]['telefono']}}</span>
+                            <span>Correo Electrónico: {{direcciones[direcciones|length-1]['email']}}</span>
+                            <p>{{direcciones[direcciones|length-1]['direccion']['calle']}} {{direcciones[direcciones|length-1]['direccion']['numero']}}, {{direcciones[direcciones|length-1]['direccion']['colonia']}}, {{direcciones[direcciones|length-1]['direccion']['codigoPostal']}}, {{direcciones[direcciones|length-1]['direccion']['ciudad']}}, {{direcciones[direcciones|length-1]['direccion']['estado']}}, México</p>
+                            <p>{{direcciones[direcciones|length-1]['direccion']['ciudad']}}, {{direcciones[direcciones|length-1]['direccion']['estado']}}, México, {{direcciones[direcciones|length-1]['direccion']['codigoPostal']}}</p>
+                        </div>
+                        <div class="address-details-right">
+                            <div class="address-change">
+                                <a href="/agregar-direccion/pago">Agregar direccion</a>
+                                <a onclick="abrirModalDireccion()">Modificar</a>
+                            </div>
+                        </div>
+                        {% else %}
+                        <div class="address-details-left">
+                            <span class="bold-text">No hay direcciones guardadas</span>
+                            <div class="address-change">
+                                <a href="/agregar-direccion/pago">Agregar direccion</a>
+                            </div>
+                        </div>
+                        {% endif %}
+                    {% endif %}
+                    
+                </div>
+            </div>
+        </div>
+
+            <div class="carrito">
+                <h2 class="productos-header">Productos</h2>
+                <div class="fila-wrapper" id="carrito">
+                    {% set lista_precios = [] %}
+                    {% for idproducto, producto in carrito.items() %}
+                    <div class="wrapper" id="fila{{loop.index}}">
+                        <input type="hidden" id="idproducto_carrito{{loop.index}}" value="{{idproducto}}">
+                        <input type="hidden" id="costo_unitario{{loop.index}}" value="{{producto['producto']['costo']}}">
+                        <div class="image-container">
+                            <img src="{{ producto['producto']['imagen'] }}" alt="Imagen del producto" class="product-image">
+                        </div>
+                        <div class="text">
+                            {{producto['producto']['nombre']}}
+                            {% set subtotal_producto = producto['cantidad']|float * producto['producto']['costo']|float %}
+                            <div class="subtotal">$<span id="subtotal_producto{{ loop.index }}">{{ "%.2f"|format(producto['producto']['costo'] * producto['cantidad'])}}</span></div>
+                        </div>
+                        
+                        <div class="section">
+                            <div class="subtotal-and-quantity">
+                                {% set subtotal_producto = producto['cantidad']|float * producto['producto']['costo']|float %}
+                                <p hidden>{{ lista_precios.append(subtotal_producto) }}</p>
+                                <div class="quantity">Cant. <span id="cantidad{{ loop.index }}">{{ producto['cantidad'] }}</span></div>
+                            </div>
+                        </div>
+                        <div class="buttons">
+                            <button type="button" onclick="modificarCantidadCarrito('{{loop.index}}','restar')">-</button>
+                            <button type="button" onclick="modificarCantidadCarrito('{{loop.index}}','sumar')">+</button>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        
+    </div>
+    
+    <div class="resumen">
+        <div class="contentbtn">
+            <button type="button" class="eliminar-btn" onclick="borrarCarrito()">Eliminar todo del carrito</button>
+        </div>
+        <div class="wrapper">
+            <div class="title">
+                Total del carrito
+            </div>
+            <div class="content">
+                <div class="item subtotal">
+                    {% set subtotal = "%.2f"|format(lista_precios|sum) %}
+                    <div class="label">Subtotal</div>
+                    <div class="value" id="subtotal_value">${{subtotal}}</div>
+                </div>
+                <div class="item subtotal">
+                    <div class="label">Envío</div>
+                    <div class="value">$50.00</div>
+                </div>
+            </div>
+            <div class="content">
+                <div class="item total">
+                    {% set gran_total = "%.2f"|format(subtotal|float + 50)%}
+                    <div class="label total">Total</div>
+                    {% if subtotal|float != 0 %}
+                    <div class="value" id="gran_total">${{gran_total}}</div>
+                    {% else %}
+                    <div class="value" id="gran_total">-</div>
+                    {% endif %}
+                </div>
+                <div id="paypal-button-container"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="direccionModal">
+    <div class="modal-content-direcciones">
+        <div class="delete-button" onclick="cerrarModalDireccion()">
+            <i class="fas fa-times"></i>
+        </div>
+        <h2>Direcciones Disponibles</h2>
+        <ul>
+            {% for direccion in direcciones %}
+                <li class="direccion-item">
+                    <div class="direccion-info" id="direccion{{loop.index}}">
+                        <span hidden id="idDireccionUsuario{{loop.index}}">{{direccion['idDireccionUsuario']}}</span>
+                        <span class="bold-text">Nombre: {{ direccion['nombres'] }} {{ direccion['apellidos'] }}</span><br>
+                        <span>Teléfono: {{ direccion['telefono'] }}</span><br>
+                        <span>Correo Electrónico: {{ direccion['email'] }}</span><br>
+                        <p>{{ direccion['direccion']['calle'] }} {{ direccion['direccion']['numero'] }}, {{ direccion['direccion']['colonia'] }}, {{ direccion['direccion']['codigoPostal'] }}, {{ direccion['direccion']['ciudad'] }}, {{ direccion['direccion']['estado'] }}, México</p>
+                        <p>{{ direccion['direccion']['ciudad'] }}, {{ direccion['direccion']['estado'] }}, México, {{ direccion['direccion']['codigoPostal'] }}</p>
+                    </div>
+                    <div class="direccion-seleccionar">
+                        <button type="button" onclick="cambiarDireccion('{{loop.index}}')">Seleccionar</button>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+
+<div class="modal-bg" id="bg-postpago">
+
+</div>
+
+
+
+<div class="modal-bg" id="modal-bg-pago">
+    <div class="modal-content-pedido">
+        <div class="close-icon" onclick="location.href='/'">+</div>
+        <h4 class="modal-text">Gracias por su compra!</h4>
+        <h4 class="modal-text">Recibirá un correo con los detalles de su compra</h4>
+        {% if 'logged_in' in session %}
+        <div class="modal-botones">
+            <button class="modal-boton" onclick="location.href='/pedidos'">Ver mis pedidos</button>
+            <button class="modal-boton" onclick="location.href='/'">Seguir comprando</button>
+        </div>
+        {% else %}
+        <div>
+            <button class="modal-boton" onclick="location.href='/'">Seguir comprando</button>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+
+<script src="https://www.paypal.com/sdk/js?client-id=ATdi4J2gX98lBtRGaHrJspwH5W40-nLXfXnwLu7A7coz_O8dQ-noGAYaOcfjTZ_Fq_Nqu1gW2Zk5AFXX&currency=MXN&locale=es_MX"></script>
+<script>
+    var idDireccionUsuario = document.getElementById('id_seleccionado').innerHTML;
+    
+    function cambiarDireccion(id) {
+        console.log("Cambiando dirección");
+        let direccion_actual = document.getElementById('direccion_seleccionada');
+        let direccion_nueva = document.getElementById('direccion'+id);
+        let idNuevo = document.getElementById('idDireccionUsuario'+id).innerHTML;
+        direccion_actual.innerHTML = direccion_nueva.innerHTML;
+        console.log("direccion inicial")
+        console.log(idDireccionUsuario)
+        console.log("direccion nueva")
+        console.log(idNuevo)
+        idDireccionUsuario = idNuevo;
+        cerrarModalDireccion();
+    }
+
+    function abrirModalDireccion() {
+        var modal = document.getElementById("direccionModal");
+        modal.style.display = "block";
+    }
+
+    function cerrarModalDireccion() {
+        var modal = document.getElementById("direccionModal");
+        modal.style.display = "none";
+    }
+
+    let precio = document.getElementById('gran_total').innerHTML.substring(1);
+    paypal.Buttons({
+        style: {
+            color:'silver',
+            shape:'pill'
+        },
+        createOrder:function(data, actions) {
+            return actions.order.create(
+                {
+                    purchase_units:[{
+                        amount:{
+                            value: precio
+                        }
+                    }],
+                    application_context:{
+                        shipping_preference: 'NO_SHIPPING'
+                    }
+                }
+            );
+        }   
+    ,
+    onApprove:function(data,actions) {
+        return actions.order.capture().then(function(details){
+            document.getElementById('bg-postpago').style.display = 'flex';
+            details.idDireccionUsuario = idDireccionUsuario;
+            $.ajax({
+                type:'POST',
+                url:'/guardar_pago',
+                data:JSON.stringify(details),
+                contentType:'application/JSON',
+                dataType:'JSON',
+                success: function(result) {
+                    document.getElementById('bg-postpago').style.display = 'none';
+                    console.log("Result: "+result);
+                    activarModalconID('pago');
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    console.log("Error: "+textStatus+" "+errorThrown);
+                }
+            })
+        })
+    }
+    }).render('#paypal-button-container');
+
+    window.addEventListener("click", function (event) {
+        if (event.target === document.getElementById('modal-bg-pago')) {
+            desactivarModalconID('pago');
+            location.href = '/';
+        }
+    });
+</script>
+
+
+
+{% endblock %}

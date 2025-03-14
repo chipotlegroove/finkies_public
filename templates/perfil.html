@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block body %}
+
+<body>
+    <div class="rainbow-banner-producto"></div>
+    <div class="contenedor">
+        <h1>Mi perfil</h1>
+        <h3>Bienvenido {{ usuario['nombreUsuario'] }}</h3>
+        <div class="contenedor-form">
+            <h3><b>Información de contacto</b></h3>
+            <form action="" method="post">
+                <div class="vertical-form">
+                    <div class="columna">
+                        <div class="form-pair">
+                            <label for="nombreUsuario">Nombre Usuario:</label>
+                            <input type="text" id="nombreUsuario" name="nombreUsuario" value="{{ usuario['nombreUsuario'] }}">
+                        </div>
+        
+                        <div class="form-pair">
+                            <label for="nombre">Nombre:</label>
+                            <input type="text" id="nombre" name="nombre" value="{{ usuario['nombre'] }}">
+                        </div>
+                        <div class="form-pair">
+                            <label for="apellido2">Apellido Materno:</label>
+                            <input type="text" id="apellido2" name="apellido2" value="{{ usuario['apellido2'] }}">
+                        </div>
+                                               
+                    </div>
+                    <div class="columna">
+                        <div class="form-pair">
+                            <label for="correo">Correo Electrónico:</label>
+                            <input type="text" id="correo" name="correo" value="{{ usuario['correo'] }}" readonly>
+                        </div>
+                        <div class="form-pair">
+                            <label for="apellido1">Apellido Paterno:</label>
+                            <input type="text" id="apellido1" name="apellido1" value="{{ usuario['apellido1'] }}">
+                        </div>
+                        <div class="form-pair">
+                            <label for="password">Contraseña:</label>
+                            <input type="password" id="password" name="password" placeholder="Ingrese su contraseña">
+                        </div>
+                        <!-- <div class="form-pair">
+                            <label for="passwordconfirm">Confirmar Contraseña:</label>
+                            <input type="password" id="passwordconfirm" name="passwordconfirm"
+                                placeholder="Confirme su contraseña">
+                            <span id="coinciden"></span>
+                        </div> -->
+                        <div class="form-pair">
+
+                            <button type="submit" class="btn-actualizar" value="Actualizar">actualizar</button>
+                            <!--<button type="button" class="btn-actualizar" onclick="location.href='pedidos'">Pedidos</button>
+                            <button type="button" class="btn-actualizar" onclick="location.href='direcciones'">Direcciones de envio</button> 
+                            <button type="button" class="btn-actualizar" onclick="location.href='favoritos'">Mi wishlist</button>--> 
+                        </div>
+                    </div>
+                </div>
+                <!-- <button type="button" id="direcciones" name="direcciones">Direcciones</button>
+                <button type="button" id="pedidos" name="pedidos">Pedidos</button> -->
+            </form>
+        </div>
+    </div>
+
+    <script>
+        var contrasena = document.getElementById("password")
+            , contrasena2 = document.getElementById("passwordconfirm");
+
+        function coinciden() {
+            if (contrasena.value != contrasena2.value) {
+                contrasena2.setCustomValidity("Las contraseñas no coinciden");
+                document.getElementById("coinciden").innerHTML = "Las contraseñas no coinciden";
+                document.getElementById("coinciden").style.color = "red";
+            } else {
+                contrasena2.setCustomValidity('');
+                document.getElementById("coinciden").innerHTML = "";
+            }
+        }
+        contrasena.onchange = validarContrasena;
+        contrasena2.onkeyup = coinciden;
+
+        function validarContrasena() {
+            var regex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/
+            if (contrasena.value == "") {
+                contrasena.setCustomValidity('');
+                document.getElementById("coinciden").innerHTML = "";
+            } else
+                if (regex.test(contrasena.value)) {
+                    contrasena.setCustomValidity('');
+                    document.getElementById("coinciden").innerHTML = "";
+                } else {
+                    contrasena.setCustomValidity("La contraseña debe tener al menos 8 caracteres, una mayuscula, una minuscula y un numero");
+                    document.getElementById("coinciden").innerHTML = "La contraseña debe tener al menos 8 caracteres, una mayuscula, una minuscula y un numero";
+                    document.getElementById("coinciden").style.color = "red";
+                }
+
+        }
+    </script>
+</body>
+{% endblock %}

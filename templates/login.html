@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block body %}
+    <div class="login">
+
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <script>
+                    // Mostrar una ventana de alerta con los mensajes
+                    alert("{{ messages|join('\\n') }}");
+                </script>
+            {% endif %}
+        {% endwith %}
+
+
+        <div class="wrapper">
+            <div class="title">
+               Inicio de Sesión
+            </div>
+            <form action="" method="post">
+               <div class="field">
+                <input type="email" name="correo" id="correo" placeholder="Introduce tu correo electrónico" required>
+               </div>
+               <div class="field">
+                  <input type="password" name="contrasena" id="contrasena" placeholder="Introduce tu contraseña" required>
+               </div>
+               <div class="content">
+                  <div class="pass-link">
+                     <a href="/recuperar-contrasena">¿Olvidaste tu contraseña?</a>
+                  </div>
+               </div>
+               <div class="field">
+                  <input type="submit" value="Iniciar Sesión">
+               </div>
+               <div class="signup-link">
+                  ¿No eres miembro? <a href="/register">Regístrate ahora</a>
+               </div>
+            </form>
+         </div>
+    </div>
+   {% endblock %}

@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+{% block body %}
+
+<div class="pedidos">
+
+    <div class="pedidos-titulo">Mis Pedidos</div>
+
+    {% if pedidos %}
+
+    <div class="rainbow-banner-producto"></div>
+
+        <div class="content-container">
+            <div class="pedidos-header">
+                <div class="header-text">Productos</div>
+                <div class="header-text">Estado</div>
+                <div class="header-text">Total</div>
+                <div class="header-text">Pedido</div>
+            </div>
+        </div>
+        <div class="divider"></div>
+
+    <div class="content-container">
+        
+        {% for id_pedido, pedido in pedidos.items() %}
+            <div class="pedido">
+                <div class="content-text images">
+                    {% for producto in pedido['productos'][:3] %}
+                        <img src="{{ producto }}" alt="">
+                    {% endfor %}
+                </div>
+                <div class="content-text estado">
+                    <div>
+                        {{ pedido['estado_envio'] }}
+                    </div>
+                    <br>
+                    <br>
+                    <a href="/pedido/{{id_pedido}}">Detalles de pedido</a>
+                </div>
+                <div class="content-text total">
+                    <div>
+                        ${{"%.2f"|format(pedido['costo'])}} MXN
+                    </div>
+                </div>
+                <div class="content-text funcionamiento">
+                    <div>
+                        <button onclick="agregarPedidoACarrito({{id_pedido}})">Volver a comprar</button>
+                    </div>
+                </div>
+            </div>
+            <div class="divider"></div>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="modal-bg" id="modal-bg-agregarpedido">
+    <div class="modal-content">
+        <div class="close-icon" onclick="desactivarModalconID('agregarpedido')">+</div>
+        <h4 class="modal-text">Los productos del pedido han sido agregados al carrito</h1>
+        <div class="modal-botones">
+            <button class="modal-boton" onclick="location.href = '/carrito'">Ir a carrito</button>
+            <button class="modal-boton" onclick="desactivarModalconID('agregarpedido')">Seguir comprando</button>
+        </div>
+        
+    </div>
+</div>
+
+<style>
+    .no-pedidos {
+        text-align: center;
+        padding: 20px;
+        background-color: #f2f2f2;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        margin: 20px auto;
+        max-width: 400px;
+    }
+
+    .no-pedidos p {
+        font-size: 18px;
+        margin: 10px 0;
+    }
+
+    .no-pedidos a {
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: #fff;
+        text-decoration: none;
+        margin: 10px 0;
+        border-radius: 5px;
+    }
+
+    .no-pedidos a:hover {
+        background-color: #0056b3;
+    }
+
+    .no-pedidos button {
+        background-color: #ff6600;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .no-pedidos button:hover {
+        background-color: #ff5500;
+    }
+
+    .no-pedidos img {
+        max-width: 100%;
+        height: auto;
+    }
+</style>
+
+<script>
+    window.addEventListener("click", function (event) {
+        if (event.target === document.getElementById('modal-bg-agregarpedido')) {
+            desactivarModalconID('agregarpedido');
+        }
+    });
+</script>
+{%endif%}
+{%endblock%}

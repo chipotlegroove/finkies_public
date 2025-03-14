@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block body %}
+<div class="direcciones">
+    <h1>Libreta de direcciones</h1>
+    <button type="button" class="btn-agregar" onclick="location.href='/agregar-direccion'">Agregar direccion</button>
+</div>
+
+<table>
+    <thead>
+        <tr>
+            <th>Nombres</th>
+            <th>Apellidos</th>
+            <th>Correo</th>
+            <th>Teléfono</th>
+            <th>Código Postal</th>
+            <th>Colonia</th>
+            <th>Calle</th>
+            <th>Número exterior</th>
+            <th>Estado</th>
+            <th>Ciudad</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for id,direccion in direcciones.items() %}
+        <tr>
+            <td>{{ direccion.nombres }}</td>
+            <td>{{ direccion.apellidos }}</td>
+            <td>{{ direccion.email }}</td>
+            <td>{{ direccion.telefono }}</td>
+            <td>{{ direccion.direccion.codigoPostal }}</td>
+            <td>{{ direccion.direccion.colonia }}</td>
+            <td>{{ direccion.direccion.calle }}</td>
+            <td>{{ direccion.direccion.numero }}</td>
+            <td>{{ direccion.direccion.estado }}</td>
+            <td>{{ direccion.direccion.ciudad }}</td>
+            <td>
+                <div>
+                    <a href="/editar-direccion/{{ id }}"><b>Editar</b></a>
+                </div>
+                <div>
+                    <button onclick="eliminarDireccion({{id}})"><b>Eliminar</b></button>
+                </div>
+            </td>
+        </tr>
+        {% endfor %}
+
+</table>
+{% endblock %}

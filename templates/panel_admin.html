@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+  {% block head %}
+  <meta charset="utf-8">
+  <title>Finkies</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+  <script src="https://kit.fontawesome.com/80f47d345b.js" crossorigin="anonymous"></script>
+  <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+    integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+
+
+  {% endblock %}
+</head>
+
+  <body>
+    <header>
+      <div class="navegador">
+        <nav>
+          <ul>
+            <div class="logo-container">
+              <li class="logo">
+                <a href="/#" class="logo-link">
+                  <img src="/static/img/logo.png" alt="Logo">
+                </a>
+              </li>
+            </div>
+  
+            <div class="toggle-container">
+              <div class="toggle">
+                <i class="fa fa-bars" aria-hidden="true"></i>
+              </div>
+            </div>
+            
+                       
+  
+            <div class="items">
+              <li><a href="/agregar_producto">Agregar Producto</a></li>
+              <li><a href="/lista_productos">Lista de productos</a></li>
+              <li><a href="/historial_ventas">Historial de ventas</a></li>
+            </div>        
+    
+            <div class="items">
+                <li><a class="btn-logout" href="/logout">Cerrar Sesión</a></li> 
+            </div>
+
+            
+            <li class="search-icon">
+              <input type="search" placeholder="Search">
+              <label class="icon">
+                <span class="fas fa-search"></span>
+              </label>
+            </li>
+    
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <div class="portada">
+        <div class="contenedor">
+            <div class="rainbow-banner">
+                <h3 class="sombra">Bienvenido administrador</h3>
+            </div>
+        </div>
+    
+        <div class="productos-intro">
+            <p class="productos-intro-text">Productos</p>
+        </div>
+    
+        <div class="carousel-container carousel-1">
+            <div class="wrapper">
+                <i id="left" class="fa-solid fa-angle-left"></i>
+                <ul class="carousel">
+                    {% for producto in productos %}
+                    <li class="card">
+                        <a href="#">
+                            <div class="img"><img src="{{producto.imagen}}" alt="{{producto.nombre}}" draggable="false">
+                            </div>
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
+                <i id="right" class="fa-solid fa-angle-right"></i>
+            </div>
+        </div>
+    
+    <script>
+
+        const carousels = document.querySelectorAll(".carousel-container");
+        
+        carousels.forEach(carouselContainer => {
+            const carousel = carouselContainer.querySelector(".carousel");
+            const firstCardWidth = carousel.querySelector(".card").offsetWidth;
+            const arrowBtns = carouselContainer.querySelectorAll("i");
+            const carouselChildrens = [...carousel.children];
+    
+            let isDragging = false, isAutoPlay = true, startX, startScrollLeft, timeoutId;
+    
+            // Get the number of cards that can fit in the carousel at once
+            let cardPerView = Math.round(carousel.offsetWidth / firstCardWidth);
+    
+            // Insert copies of the last few cards to beginning of carousel for infinite scrolling
+            carouselChildrens.slice(-cardPerView).reverse().forEach(card => {
+                carousel.insertAdjacentHTML("afterbegin", card.outerHTML);
+            });
+    
+            // Insert copies of the first few cards to end of carousel for infinite scrolling
+            carouselChildrens.slice(0, cardPerView).forEach(card => {
+                carousel.insertAdjacentHTML("beforeend", card.outerHTML);
+            });
+    
+            // Scroll the carousel at appropriate postition to hide first few duplicate cards on Firefox
+            carousel.classList.add("no-transition");
+            carousel.scrollLeft = carousel.offsetWidth;
+            carousel.classList.remove("no-transition");
+    
+            // Add event listeners for the arrow buttons to scroll the carousel left and right
+            arrowBtns.forEach(btn => {
+                btn.addEventListener("click", () => {
+                    carousel.scrollLeft += btn.id.includes("left") ? -firstCardWidth : firstCardWidth;
+                });
+            });
+    
+            const dragStart = (e) => {
+                isDragging = true;
+                carousel.classList.add("dragging");
+                // Records the initial cursor and scroll position of the carousel
+                startX = e.pageX;
+                startScrollLeft = carousel.scrollLeft;
+            }
+    
+            const dragging = (e) => {
+                if(!isDragging) return; // if isDragging is false return from here
+                // Updates the scroll position of the carousel based on the cursor movement
+                carousel.scrollLeft = startScrollLeft - (e.pageX - startX);
+            }
+    
+            const dragStop = () => {
+                isDragging = false;
+                carousel.classList.remove("dragging");
+            }
+    
+            const infiniteScroll = () => {
+                // If the carousel is at the beginning, scroll to the end
+                if(carousel.scrollLeft === 0) {
+                    carousel.classList.add("no-transition");
+                    carousel.scrollLeft = carousel.scrollWidth - (2 * carousel.offsetWidth);
+                    carousel.classList.remove("no-transition");
+                }
+                // If the carousel is at the end, scroll to the beginning
+                else if(Math.ceil(carousel.scrollLeft) === carousel.scrollWidth - carousel.offsetWidth) {
+                    carousel.classList.add("no-transition");
+                    carousel.scrollLeft = carousel.offsetWidth;
+                    carousel.classList.remove("no-transition");
+                }
+    
+                // Clear existing timeout & start autoplay if mouse is not hovering over carousel
+                clearTimeout(timeoutId);
+                if(!carouselContainer.matches(":hover")) autoPlay();
+            }
+    
+            const autoPlay = () => {
+                if(window.innerWidth < 800 || !isAutoPlay) return; // Return if window is smaller than 800 or isAutoPlay is false
+                // Autoplay the carousel after every 2500 ms
+                timeoutId = setTimeout(() => carousel.scrollLeft += firstCardWidth, 2500);
+            }
+            autoPlay();
+    
+            carousel.addEventListener("mousedown", dragStart);
+            carousel.addEventListener("mousemove", dragging);
+            document.addEventListener("mouseup", dragStop);
+            carousel.addEventListener("scroll", infiniteScroll);
+            carouselContainer.addEventListener("mouseenter", () => clearTimeout(timeoutId));
+            carouselContainer.addEventListener("mouseleave", autoPlay);
+        });
+
+
+      $('nav ul li.btn span').click(function(){
+        $('nav ul div.items').toggleClass("show");
+        $('nav ul li.btn span').toggleClass("show");
+      });
+
+      document.addEventListener('DOMContentLoaded', function() {
+        const toggleBtn = document.querySelector('.toggle');
+        const toggleBtnIcon = document.querySelector('.toggle i');
+        const dropDownMenu = document.querySelector('.dropdown_menu');
+
+        toggleBtn.addEventListener('click', function() {
+          dropDownMenu.classList.toggle('open');
+          const isOpen = dropDownMenu.classList.contains('open');
+
+          toggleBtnIcon.className = isOpen
+            ? 'fa fa-xmark'
+            : 'fa fa-bars';
+        });
+      });
+
+
+    </script>
+
+      </ul>
+    </nav>
+  </div>
+
+  <script>
+    $('nav ul li.btn span').click(function () {
+      $('nav ul div.items').toggleClass("show");
+      $('nav ul li.btn span').toggleClass("show");
+    });
+  </script>
+
+  {% block body %}
+
+  {% endblock %}
+
+  <footer class="pie-pagina">
+    <div class="grupo-1">
+      <div class="box">
+        <figure>
+          <a href="#">
+            <img src="/static/img/logo.png" alt="logo de finkies">
+          </a>
+        </figure>
+      </div>
+
+      <div class="box">
+        <h2>SOBRE FINKIES</h2>
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quibusdam, similique!</p>
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quibusdam, similique!</p>
+      </div>
+
+      <div class="box">
+        <h2>SIGUENOS</h2>
+        <div class="red-social">
+          <a href="#" class="fa fa-facebook"></a>
+          <a href="#" class="fa fa-instagram"></a>
+          <a href="#" class="fa fa-twitter"></a>
+          <a href="#" class="fa fa-heart"></a>
+        </div>
+      </div>
+    </div>
+    <div class="grupo-2">
+      <small>&copy; 2023 <b>Finkies</b> - Todos los derechos reservados</small>
+    </div>
+  </footer>
+
+</body>
+
+</html>

@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+{% block body %}
+<div class="container">
+    <div class="carrito">
+        <h1>Mi lista de deseos</h1>
+
+        
+        {% if favoritos %}
+
+        
+
+        <div class="fila-wrapper" id="carrito">
+            {% for producto in favoritos %}
+            <div class="wrapper" id="fila{{loop.index}}">
+                <input type="hidden" id="idproducto_carrito{{loop.index}}" value="{{idproducto}}">
+                <div class="image-container">
+                    <img src="{{producto[0].imagen}}" alt="Imagen del producto" class="product-image">
+                </div>
+                <div class="text">
+                    {{producto[0].nombre}}
+                </div>
+                <div class="section">
+                    <div class="subtotal-and-quantity">
+                        <div class="subtotal">$<span id="subtotal_producto{{ loop.index }}">{{
+                                "%.2f"|format(producto[0].costo * producto[1])}}</span></div>
+                        <div class="quantity">Cant. <span id="cantidad{{ loop.index }}">{{ producto[1]}}</span></div>
+                    </div>
+                </div>
+                <button type="button" class="btn-agregar-carrito-wishlist" onclick="actualizarCarritoDictProductoPerdon({{producto[0].idProducto}},{{producto[1]}})" id="boton-carrito">Agregar al carrito</button>
+                <div class="delete-button" onclick="eliminarFavorito({{producto[0].idProducto}},{{loop.index}})">
+                    <i class="fas fa-times"></i>
+                </div>
+            </div>
+            {% endfor %}
+
+            <div class="resumen">
+                <div class="contentbtn">
+                    <button type="button" class="eliminar-btn" onclick="activarModalconID('limpiarwishlist')">Eliminar todo
+                        de
+                        la lista</button>
+                </div>
+                <div class="contentbtn">
+                    <button type="button" class="eliminar-btn" onclick="activarModalconID('agregarcarrito')">Agregar al
+                        carrito
+                        todo lo de la lista</button>
+                </div>
+            </div>
+        </div>
+
+        
+        
+
+        {% else %}
+
+        <div class="portada">
+            <div class="centered">
+                <p class="portada-title">Aún no hay productos</p>
+                <p>Comienza a agregar ahora</p>
+                <p></p>
+                <a href="/" class="button">
+                    <button style="margin-bottom: inherit">Ver productos</button>
+                </a>
+                <img src="/static/img/no-hay-pedidos.svg" alt="Imagen de portada" class="portada-image">
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    
+</div>
+
+<div class="modal-bg" id="modal-bg-limpiarwishlist">
+    <div class="modal-content">
+        <div class="close-icon" onclick="desactivarModalconID('limpiarwishlist')">+</div>
+        <h4 class="modal-text">Desea borrar su lista de deseos?</h1>
+            <div class="modal-botones">
+                <button class="wishlist-btn" onclick="limpiarFavoritos()">Si</button>
+                <button class="wishlist-btn" onclick="desactivarModalconID('limpiarwishlist')">No</button>
+            </div>
+    </div>
+</div>
+
+<div class="modal-bg" id="modal-bg-agregarcarrito">
+    <div class="modal-content">
+        <div class="close-icon" onclick="desactivarModalconID('agregarcarrito')">+</div>
+        <h4 class="modal-text">Desea agregar toda su lista al carrito?</h1>
+            <div class="modal-botones">
+                <button class="wishlist-btn" onclick="agregarFavoritosACarrito()">Si</button>
+                <button class="wishlist-btn" onclick="desactivarModalconID('agregarcarrito')">No</button>
+            </div>
+    </div>
+</div>
+
+
+
+<div class="modal-bg" id="modal-bg-agregarproducto">
+    <div class="modal-content">
+        <div class="close-icon" onclick="desactivarModalconID('agregarproducto')">+</div>
+        <h4 class="modal-text">El producto ha sido agregado al carrito</h1>
+            <div class="modal-botones">
+                <button class="modal-boton" onclick="location.href = '/carrito'">Ir al carrito</button>
+                <button class="modal-boton" onclick="desactivarModalconID('agregarproducto')">Seguir comprando</button>
+            </div>
+
+    </div>
+</div>
+
+
+
+<script>
+
+    window.addEventListener("click", function (event) {
+        if (event.target === document.getElementById('modal-bg-agregarproducto')) {
+            desactivarModalconID('agregarproducto');
+        }
+    });
+
+    window.addEventListener("click", function (event) {
+        if (event.target === document.getElementById('modal-bg-limpiarwishlist')) {
+            desactivarModalconID('limpiarwishlist');
+        }
+    });
+
+    window.addEventListener("click", function (event) {
+        if (event.target === document.getElementById('modal-bg-agregarcarrito')) {
+            desactivarModalconID('agregarcarrito');
+        }
+    });
+
+</script>
+{% endblock %}

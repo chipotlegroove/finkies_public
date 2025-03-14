@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+  {% block head %}
+  <meta charset="utf-8">
+  <title>Finkies</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+  <script src="https://kit.fontawesome.com/80f47d345b.js" crossorigin="anonymous"></script>
+  <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+  <script src="{{ url_for('static', filename='js/productos.js') }}"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+    integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+
+
+  {% endblock %}
+</head>
+
+  <body>
+
+    <header>
+      <div class="navegador">
+        <nav>
+          <ul>
+            <div class="logo-container">
+              <li class="logo">
+                <a href="/#" class="logo-link">
+                  <img src="/static/img/logo.png" alt="Logo">
+                </a>
+              </li>
+            </div>
+  
+            <div class="toggle-container">
+              <div class="toggle">
+                <i class="fa fa-bars" aria-hidden="true"></i>
+              </div>
+            </div>
+            
+                       
+  
+            <div class="items">
+              <li><a href="#">Agregar Producto</a></li>
+              <li><a href="/lista_productos">Lista de productos</a></li>
+              <li><a href="/historial_ventas">Historial de ventas</a></li>
+            </div>        
+    
+            <div class="items">
+                <li><a class="btn-logout" href="/logout">Cerrar Sesión</a></li> 
+            </div>
+
+            
+            <li class="search-icon">
+              <input type="search" placeholder="Search">
+              <label class="icon">
+                <span class="fas fa-search"></span>
+              </label>
+            </li>
+    
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+{% block body %}
+
+  <div class="agregar-productos-content">
+
+    <div class="lista-productos-header">
+      <h1>Agregar producto</h1>
+  
+      <div class="rainbow-banner-lista"></div>
+  
+      <p>Llena todos los campos solicitados para poder agregar un producto a la tienda de Finkies</p>
+    </div>
+
+    <div class="agregar-producto">
+      <div class="form-wrapper">
+          <form action="" method="post" enctype="multipart/form-data">
+              <div class="form-row">
+                  <div class="form-field">
+                      <label for="product-image">Imagen del Producto:</label>
+                      <div class="file-container">
+                          <input type="file" name="product-image" id="product-image" accept="image/*" required>
+                          <i class="fas fa-folder-open"></i>
+                      </div>
+                  </div>
+                  <div class="form-field">
+                      <label for="product-type">Tipo de Producto:</label>
+                      <select name="product-type" id="product-type" required>
+                          <option value="" disabled selected>Selecciona el tipo de producto</option>
+                          <option value="aretes">Aretes</option>
+                          <option value="stickers">Stickers</option>
+                          <option value="pulseras">Pulseras</option>
+                          <option value="collares">Collares</option>
+                      </select>
+                  </div>
+              </div>
+
+              <div class="form-row">
+                  <div class="form-field">
+                      <label for="product-name">Nombre del Producto:</label>
+                      <input type="text" name="product-name" id="product-name" required>
+                  </div>
+                  <div class="form-field">
+                      <label for="product-cost">Costo del Producto:</label>
+                      <input inputmode="numeric" name="product-cost" id="product-cost" value="$" required oninput="maintainFirstCharacter(event); validateInput(event)">
+                  </div>
+              </div>
+
+              <div class="form-row">
+                  <div class="form-field">
+                      <label for="short-description">Descripción Resumida:</label>
+                      <input type="text" name="short-description" id="short-description" required></textarea>
+                  </div>
+                  <div class="form-field">
+                      <label for="full-description">Descripción General:</label>
+                      <textarea name="full-description" id="full-description" required></textarea>
+                  </div>
+              </div>
+
+              <div class="center">
+                  <input type="submit" id="confirmar" value="Agregar Producto">
+              </div>
+
+          </form>
+      </div>
+    </div>
+
+  </div>
+
+
+  <div class="modal-bg" id="modal-bg-agregarproducto">
+      <div class="modal-content-agregarproducto">
+          <div class="close-icon" onclick="desactivarModalconID('agregarproducto')">+</div>
+          <h4 class="modal-text">Producto agregado exitosamente!</h1>
+          <div class="modal-botones">
+              <button class="modal-boton" onclick="location.href = '/lista_productos'">Lista de productos</button>
+              <button class="modal-boton" onclick="desactivarModalconID('agregarproducto')">Seguir agregando</button>
+          </div>
+          
+      </div>
+  </div>
+
+{% endblock %}
+<footer class="pie-pagina">
+    <div class="grupo-1">
+      <div class="box">
+        <figure>
+          <a href="#">
+            <img src="/static/img/logo.png" alt="logo de finkies">
+          </a>
+        </figure>
+      </div>
+
+      <div class="box">
+        <h2>SOBRE FINKIES</h2>
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quibusdam, similique!</p>
+        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quibusdam, similique!</p>
+      </div>
+
+      <div class="box">
+        <h2>SIGUENOS</h2>
+        <div class="red-social">
+          <a href="#" class="fa fa-facebook"></a>
+          <a href="#" class="fa fa-instagram"></a>
+          <a href="#" class="fa fa-twitter"></a>
+          <a href="#" class="fa fa-heart"></a>
+        </div>
+      </div>
+    </div>
+    <div class="grupo-2">
+      <small>&copy; 2023 <b>Finkies</b> - Todos los derechos reservados</small>
+    </div>
+  </footer>
+
+  <script>
+
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            window.onload = activarModalconID('agregarproducto');
+        {% endif %}
+    {% endwith %}
+
+    function maintainFirstCharacter(event) {
+      var input = event.target;
+      if (input.value[0] !== '$') {
+        input.value = '$' + input.value.substring(1);
+      }
+    }
+
+    function validateInput(event) {
+        var input = event.target;
+        var firstChar = input.value[0];
+        var restOfString = input.value.substring(1);
+        restOfString = restOfString.replace(/[^0-9.]/g, '');
+        input.value = firstChar + restOfString;
+        var dotIndex = restOfString.indexOf('.');
+        if (dotIndex !== -1) {
+            var integerPart = restOfString.substring(0, dotIndex+1);
+            var decimalPart = restOfString.substring(dotIndex + 1).replace(/\./g, '');
+            if (decimalPart.length > 2) {
+                decimalPart = decimalPart.substring(0, 2);
+            }
+            restOfString = integerPart + decimalPart;
+        }
+        input.value = firstChar + restOfString;
+    }
+
+    window.addEventListener("click", function (event) {
+    if (event.target === document.getElementById('modal-bg-agregarproducto')) {
+        desactivarModalconID('agregarproducto');
+    }});
+  </script>
+
+  </body>
+</html>

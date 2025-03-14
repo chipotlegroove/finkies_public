@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block body %}
+<div class="container">
+    <div class="carrito">
+        <h1>Carrito de compras</h1>
+        <div class="fila-wrapper" id="carrito">
+            {% set lista_precios = [] %}
+            {% for idproducto, producto in carrito.items() %}
+            <div class="wrapper" id="fila{{loop.index}}">
+                <input type="hidden" id="idproducto_carrito{{loop.index}}" value="{{idproducto}}">
+                <input type="hidden" id="costo_unitario{{loop.index}}" value="{{producto['producto']['costo']}}">
+                <div class="image-container">
+                    <img src="{{ producto['producto']['imagen'] }}" alt="Imagen del producto" class="product-image">
+                </div>
+                <div class="text">
+                    {{producto['producto']['nombre']}}
+                </div>
+                <div class="section">
+                    <div class="subtotal-and-quantity">
+                        {% set subtotal_producto = producto['cantidad']|float * producto['producto']['costo']|float %}
+                        <p hidden>{{ lista_precios.append(subtotal_producto) }}</p>
+                        <div class="subtotal">$<span id="subtotal_producto{{ loop.index }}">{{ "%.2f"|format(producto['producto']['costo'] * producto['cantidad'])}}</span></div>
+                        <div class="quantity">Cant. <span id="cantidad{{ loop.index }}">{{ producto['cantidad'] }}</span></div>
+                    </div>
+                </div>
+                <div class="buttons">
+                    <button type="button" onclick="modificarCantidadCarrito('{{loop.index}}','restar')">-</button>
+                    <button type="button" onclick="modificarCantidadCarrito('{{loop.index}}','sumar')">+</button>
+                </div>
+                <div class="delete-button" onclick="eliminarProducto('{{loop.index}}')">
+                    <i class="fas fa-times"></i>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="resumen">
+        <div class="contentbtn">
+            <button type="button" class="eliminar-btn" onclick="borrarCarrito()">Eliminar todo del carrito</button>
+        </div>
+        <div class="wrapper">
+            <div class="title">
+                Total del carrito
+            </div>
+            <div class="content">
+                <div class="item subtotal">
+                    {% set subtotal = "%.2f"|format(lista_precios|sum) %}
+                    <div class="label">Subtotal</div>
+                    <div class="value" id="subtotal_value">${{subtotal}}</div>
+                </div>
+                <div class="item subtotal">
+                    <div class="label">Envío</div>
+                    <div class="value">$50.00</div>
+                </div>
+            </div>
+            <div class="content">
+                <div class="item total">
+                    {% set gran_total = "%.2f"|format(subtotal|float + 50)%}
+                    <div class="label total">Total</div>
+                    {% if subtotal|float != 0 %}
+                    <div class="value" id="gran_total">${{gran_total}}</div>
+                    {% else %}
+                    <div class="value" id="gran_total">-</div>
+                    {% endif %}
+                </div>
+                <button type="button" id="pagar" onclick="location.href='/pago'" {% if carrito|length==0 %} disabled {% endif %}>Finalizar pedido</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends "base_admin.html" %}
+{% block body %}
+<div>
+
+    <div class="rainbow-banner-producto">
+
+    </div>
+
+    <!-- No se de q tamaño la foto -->
+    <div class="contenedor">
+        <div class="producto-del-mes">
+            <div class="">
+                <img src="{{producto['imagen']}}" alt="" class="">
+            </div>
+
+            <div class="contenedor-producto-texto">
+                <div class="">
+                    <h3>{{producto['nombre']}}</h3>
+                    <p>{{producto['descripcionResumida']}}</p>
+                    <hr>
+                    <p class="precio" id="precio">${{"%.2f"|format(producto['costo'])}}</p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+   
+</div>
+
+
+{% endblock %}

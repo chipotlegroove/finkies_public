@@ -1,0 +1,160 @@
+{% extends "base_admin.html" %}
+{% block body %}
+
+<div class="pedidos">
+    <div class="pedidos-titulo">Historial de ventas</div>
+
+    <div class="rainbow-banner-producto"></div>
+
+</div>
+
+<div class="pedido">
+    <div class="content-container">
+        <div class="pedido-header">
+            <div class="header-text-pedido">Detalles del pedido</div>
+        </div>
+    </div>
+</div>
+
+<div class="pedidos">
+    <div class="divider"></div>
+</div>
+
+<div class="container-pedido">
+    <div class="direcciones-container">
+        <div class="direccion-pedido">
+            <h2 class="datos-titulo">Dirección</h2>
+            <div class="direccion-detalles">
+                <div class="datos-label">{{ pedido['nombres'] }}</div>
+                <div class="datos-label">{{ pedido['apellidos'] }}</div>
+                <div class="datos-label">{{pedido['email']}}</div>
+                <div class="datos-label">{{direccion['codigoPostal'] }}</div>
+                <div class="datos-label">{{direccion['colonia']}}</div>
+                <div class="datos-label">{{direccion['calle']}}</div>
+                <div class="datos-label">México</div>
+                <div class="datos-label">{{direccion['estado']}}</div>
+                <div class="datos-label">{{direccion['ciudad']}}</div>
+                <div class="datos-label">{{pedido['telefono']}}</div>
+            </div>
+        </div>
+    </div>
+    <div class="productos-contenedor">
+        <div class="productos-pedido">
+            <div class="lista-productos">
+                <table>
+                  <thead>
+                    <th>
+                      Producto
+                    </th>
+                    <th>
+                      Cantidad
+                    </th>
+                    <th>
+                      Precio
+                    </th>
+                    <th>
+                      Total
+                    </th>
+                  </thead>
+                  <tbody id="tablaPedidos">
+                    {% for producto, cantidad in pedido['productos'] %}
+                    <tr id="pedido{{loop.index}}">
+                      <td>
+                        {{producto.nombre}}
+                      </td>
+                      <td>
+                        {{cantidad}}
+                    </td>
+                      <td>
+                        ${{"%.2f"|format(producto.costo)}}
+                    </td>
+
+                      <td>
+                        ${{"%.2f"|format(cantidad*producto.costo)}}
+                    </td>
+                      <td hidden>
+                        esta cosa existe para no modificar el orden del arreglo de celdas para las funciones, antes estaba el boton de borrar. NO BORRAR o va a dejar de funcionar correctamente
+                      </td>
+                      <td hidden>
+                        <img src="" alt="">
+                      </td>
+                      <td hidden>
+                        papas
+                      </td>
+                      <td hidden>
+                        dsaf
+                      </td>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+        </div>
+    </div>
+    <div class="datos-container">
+
+        
+        <div class="resumen-pedido">
+            <div class="wrapper">
+                <div class="datos-titulo">Total de compra</div>
+                <div>
+                    <div>
+                        <div class="datos-label">Subtotal de compra: ${{"%.2f"|format(pedido['costo']|float - 50)}}</div>
+                    </div>
+                    <div>
+                        <div class="datos-label">Costo de envío: $50.00</div>
+                    </div>
+                    <div>
+                        <div class="datos-label">Total: ${{"%.2f"|format(pedido['costo'])}}</div>
+                    </div>
+                </div>
+            </div>
+            Estatus de compra
+            <br>
+            <input type="hidden" id="idPedido" value="{{pedido['idPedido']}}">
+            <input type="text" id="estadoPedido" value="{{pedido['estado_envio']}}">
+
+            {% set idPedido = pedido['idPedido'] %}
+
+            <input type="checkbox" onclick="cambiarEstadoPedido()" {% if pedido['estado_envio']=='Enviado' %} checked{% endif %}>
+
+        </div>
+    </div>
+</div>
+<script>
+    
+function cambiarValorEnvio() {
+  let estadoInput = document.getElementById("estadoPedido");
+  let estado = estadoInput.value;
+
+  if (estado === "Enviado") {
+    estadoInput.value = "No enviado";
+  } else{
+    estadoInput.value = "Enviado";
+  }
+}
+
+function cambiarEstadoPedido() {
+    console.log("hola");
+    cambiarValorEnvio();
+    let idPedido=document.getElementById("idPedido").value;
+    let informacion=[
+        {"id_producto":1},
+        {"cantidad":1},
+        {"tipo":1},
+    ];
+
+    $.ajax({
+        type: "POST",
+        url: "/cambiar_estado_pedido/"+idPedido,
+        data: JSON.stringify(informacion),
+        contentType: "application/json",
+        dataType: 'json',
+        success: function(result) {
+        console.log("Result:");
+        console.log(result);
+        }  
+        });
+    }
+</script>
+
+{% endblock %}

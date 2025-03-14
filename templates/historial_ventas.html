@@ -1,0 +1,130 @@
+{% extends "base_admin.html" %}
+{% block body %}
+  
+  <div class="lista-productos-content">
+    <div class="lista-productos-header">
+      <h1>Historial de ventas</h1>
+
+      <div class="rainbow-banner-lista"></div>
+      <label for="">Buscar por nombre</label>
+      <input type="text" name="buscar_nombre" id="buscar_nombre" placeholder="Introduce el nombre del producto..." onkeyup="buscarPorUsuario()">
+    </div>
+  </div>
+  
+  <div class="lista-productos-content">
+
+    <div class="lista-productos">
+      <table>
+        <thead>
+          <th>
+            Número de pedido
+          </th>
+          <th>
+            Correo usuario
+          </th>
+          <th>
+            Total
+          </th>
+          <th>
+            Detalles del pedido
+          </th>
+        </thead>
+        <tbody id="tablaPedidos">
+          {% for pedido in pedidos %}
+          <tr id="pedido{{loop.index}}">
+            <td>
+              {{pedido['id']}}
+            </td>
+            <td>
+                {{pedido['email']}}
+            </td>
+            <td>
+                ${{"%.2f"|format(pedido['costo'])}}
+            </td>
+            <td>
+              <button onclick="location.href='detalles_venta/{{pedido['id']}}';" >Detalles</button>
+            </td>
+            <td hidden>
+              esta cosa existe para no modificar el orden del arreglo de celdas para las funciones, antes estaba el boton de borrar. NO BORRAR o va a dejar de funcionar correctamente
+            </td>
+            <td hidden>
+              <img src="" alt="">
+            </td>
+            <td hidden>
+              papas
+            </td>
+            <td hidden>
+              dsaf
+            </td>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="modal-bg" id="modal-bg-editarproducto">
+      <div class="modal-content-detalles">
+          <div class="add-product-form">
+              <div class="form-wrapper">
+                  <div class="form-title">
+                    <div class="mitad derecha">Editar Producto</div>
+                    <div class="mitad izquierda">
+                      <div class="close-button" onclick="desactivarModalconID('editarproducto')">
+                        <i class="fas fa-times"></i>
+                      </div>
+                    </div>
+                  </div>
+                  <form action="" id="form-detalles">  
+                      <div class="form-row">
+                          <div class="form-field">
+                              <label for="product-image">Imagen del Producto:</label>
+                              <div class="file-container">
+                                  <input type="file" name="product-image" id="product-image" accept="image/*">
+                                  <i class="fas fa-folder-open"></i>
+                              </div>
+                              <a href="" target="_blank" id="link_imagen" class="link-imagen">Imagen actual</a>
+                          </div>
+                          <div class="form-field">
+                              <label for="product-type">Tipo de Producto:</label>
+                              <select name="product-type" id="product-type" required>
+                                  <option value="aretes">Aretes</option>
+                                  <option value="stickers">Stickers</option>
+                                  <option value="pulseras">Pulseras</option>
+                                  <option value="collares">Collares</option>
+                              </select>
+                          </div>
+                      </div>
+  
+                      <div class="form-row">
+                          <div class="form-field">
+                              <label for="product-name">Nombre del Producto:</label>
+                              <input type="text" name="product-name" id="product-name" required>
+                          </div>
+                          <div class="form-field">
+                              <label for="product-cost">Costo del Producto:</label>
+                              <input inputmode="numeric" name="product-cost" id="product-cost" oninput="maintainFirstCharacter(event); validateInput(event)" required>
+                          </div>
+                      </div>
+  
+                      <div class="form-row">
+                          <div class="form-field">
+                              <label for="short-description">Descripción Resumida:</label>
+                              <input type="text" name="short-description" id="short-description"></textarea>
+                          </div>
+                          <div class="form-field">
+                              <label for="full-description">Descripción General:</label>
+                              <textarea name="full-description" id="full-description"></textarea>
+                          </div>
+                      </div>
+  
+                      <div class="center">
+                        <button class="modal-boton" onclick="actualizarProducto()">Editar Producto</button>
+                      </div>
+                      <p hidden id="product-id"></p>
+                  </form>
+              </div>
+          </div>
+      </div>
+    </div>
+
+  </div>
+  {%endblock%}

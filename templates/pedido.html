@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% block body %}
+
+<div class="pedidos">
+    <div class="pedidos-titulo">Mis Pedidos</div>
+
+    <div class="rainbow-banner-producto"></div>
+
+</div>
+
+<div class="pedido">
+    <div class="content-container">
+        <div class="pedido-header">
+            <div class="header-text-pedido">Compra</div>
+            <div class="header-text-pedido">Precio</div>
+        </div>
+    </div>
+</div>
+
+<div class="pedidos">
+    <div class="divider"></div>
+</div>
+
+<div class="container-pedido">
+    <div class="productos-contenedor">
+        <div class="productos-pedido">
+            <div class="fila-wrapper" id="carrito">
+                {% for producto, cantidad in pedido['productos'] %}
+                <div class="product-item">
+                    <div class="image-container">
+                        <img src="{{ producto.imagen }}" alt="Imagen del producto" class="product-image">
+                    </div>
+                    <div class="text">
+                        <div class="columnas">
+                            <div class="columna-izquierda">
+                                <span class="bold-text">{{ producto.nombre }}</span>
+                                <div class="descripcion">
+                                    {{ producto.descripcionResumida }}
+                                </div>
+
+                                <div class="cantidad">
+                                    <span class="bold-text">Cantidad: {{cantidad}}</span>
+                                </div>
+                            </div>
+
+                            <div class="columna-derecha">
+                                <span class="bold-text">$ {{ "%.2f"|format(producto.costo) }} MXN</span>
+                            </div>
+
+                            
+                        </div>
+                    </div>                    
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <div class="datos-container">
+        <div class="direcciones-container fecha-compra">
+            <div class="direccion-pedido">
+                <h2 class="datos-titulo">Fecha de compra</h2>
+                <span class="datos-titulo">{{pedido['fecha']}}</span>
+            </div>
+        </div>
+
+        <div class="direcciones-container">
+            <div class="direccion-pedido">
+                <h2 class="datos-titulo">Dirección de Entrega</h2>
+                <div class="direccion-detalles">
+                    <div class="datos-label">Nombre: {{ pedido['nombres'] }} {{ pedido['apellidos'] }}</div>
+                    <div class="datos-label">Correo: {{pedido['email']}}</div>
+                    <div class="datos-label">Teléfono: {{ pedido['telefono'] }}</div>
+                    <div class="datos-label">Dirección: {{pedido['direccion']}}</div>
+                </div>
+            </div>
+        </div>
+        <div class="resumen-pedido">
+            <div class="wrapper">
+                <div class="datos-titulo">Total del carrito</div>
+                <div>
+                    <div>
+                        <div class="datos-label">Subtotal de compra: ${{"%.2f"|format(pedido['costo']|float - 50)}}</div>
+                    </div>
+                    <div>
+                        <div class="datos-label">Costo de envío: $50.00</div>
+                    </div>
+                    <div>
+                        <div class="datos-label">Total: ${{"%.2f"|format(pedido['costo'])}}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

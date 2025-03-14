@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block body %}
+<div>
+
+    <div class="rainbow-banner-producto">
+
+    </div>
+
+    <!-- No se de q tamaño la foto -->
+    <div class="contenedor">
+        <div class="producto-del-mes">
+            <div class="">
+                <img src="{{producto['imagen']}}" alt="" class="">
+            </div>
+
+            <div class="contenedor-producto-texto">
+                <div class="">
+                    <h1>{{producto['nombre']}}</h1>
+                    <p>{{producto['descripcionResumida']}}</p>
+                    <hr>
+                    <p class="precio" id="precio">${{"%.2f"|format(producto['costo'])}}</p>
+                    <div>
+                        <div class="flex flex-row">
+                            <div class="">
+                                <span>Cantidad: </span>
+                            </div>
+                            <div class="btn-cantidad ms-2 grid grid-cols-3 divide-x text-center">
+                                <button type="button" onclick="modificarCantidad('restar')">-</button>
+                                <span id="cantidad">1</span>
+                                <button type="button" onclick="modificarCantidad('sumar')">+</button>
+                            </div>
+                        </div>
+                        <input type="hidden" id="idProducto" value="{{producto['idProducto']}}">
+                    </div>
+                </div>
+                <div class="btn-general-producto">
+                    <button type="button" class="btn-agregar-carrito" onclick="actualizarCarritoDictProducto()" id="boton-carrito">Agregar al
+                        carrito</button>
+                    <button type="button" class="btn-wishlist" onclick="agregarFavorito()"><i class="fa-regular fa-heart"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-bg" id="modal-bg-agregarproducto">
+        <div class="modal-content">
+            <div class="close-icon" onclick="desactivarModalconID('agregarproducto')">+</div>
+            <h4 class="modal-text">El producto ha sido agregado al carrito</h1>
+            <div class="modal-botones">
+                <button class="modal-boton" onclick="location.href = '/carrito'">Ir al carrito</button>
+                <button class="modal-boton" onclick="desactivarModalconID('agregarproducto')">Seguir comprando</button>
+            </div>
+            
+        </div>
+    </div>
+
+    <div class="modal-bg" id="modal-bg-agregarwishlist">
+        <div class="modal-content">
+            <div class="close-icon" onclick="desactivarModalconID('agregarwishlist')">+</div>
+            <h4 class="modal-text">El producto ha sido agregado a su wishlist</h1>
+            <div class="modal-botones">
+                <button class="modal-boton" onclick="location.href = '/favoritos'">Ir a wishlist</button>
+                <button class="modal-boton" onclick="desactivarModalconID('agregarwishlist')">Seguir comprando</button>
+            </div>
+            
+        </div>
+    </div>
+</div>
+
+<script>
+    window.addEventListener("click", function (event) {
+    if (event.target === document.getElementById('modal-bg-agregarproducto')) {
+        desactivarModalconID('agregarproducto');
+    }
+});
+
+window.addEventListener("click", function (event) {
+    if (event.target === document.getElementById('modal-bg-agregarwishlist')) {
+        desactivarModalconID('agregarwishlist');
+    }
+});
+</script>
+
+{% endblock %}
